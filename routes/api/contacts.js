@@ -7,20 +7,20 @@ const router = express.Router();
 
 const contactsAddSchema = Joi.object({
   name: Joi.string()
-    .pattern(new RegExp(`^[A-Z][a-zA-Z '.-]*[A-Za-z][^-]$`))
+    .pattern(new RegExp(`^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$`))
     .required(),
-  email: Joi.string()
-    .pattern(new RegExp('^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,})$'))
-    .required(),
+  email: Joi.string().email().required(),
   phone: Joi.string()
-    .pattern(new RegExp('^[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4}$'))
+    .pattern(new RegExp('^[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$'))
     .required(),
 });
+
+// pattern(new RegExp('^[\\w-\\.]+@([\\w-]+.)+[\\w-]{2,4}$'));
 
 router.get('/', async (req, res, next) => {
   try {
     const result = await contactsService.listContacts();
-    res.json({ result });
+    res.json(result);
   } catch (error) {
     next(error);
   }
@@ -76,7 +76,7 @@ router.delete('/:contactId', async (req, res, next) => {
       throw HttpError(404, 'Not found');
     }
 
-    res.json(result);
+    res.json({ message: result });
   } catch (error) {
     next(error);
   }
@@ -90,13 +90,15 @@ router.put('/:contactId', async (req, res, next) => {
     if (error) {
       const { name, email, phone } = req.body;
 
+      if (Object.keys(req.body).length === 0) {
+        throw HttpError(400, 'Missing fields');
+      }
+
       const errorReason = !name
         ? Object.keys({ name })
         : !email
         ? Object.keys({ email })
-        : !phone
-        ? Object.keys({ phone })
-        : 'some';
+        : !phone && Object.keys({ phone });
 
       throw HttpError(400, `Missing required '${errorReason}' field`);
     }

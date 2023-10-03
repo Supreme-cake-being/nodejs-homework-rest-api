@@ -54,7 +54,7 @@ const updateContact = async (contactId, { name, email, phone }) => {
   }
 
   contacts[contactIndex] = {
-    contactId,
+    id: contactId,
     name,
     email,
     phone,
