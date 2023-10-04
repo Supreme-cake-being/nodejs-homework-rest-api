@@ -9,13 +9,13 @@ const contactsAddSchema = Joi.object({
   name: Joi.string()
     .pattern(new RegExp(`^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$`))
     .required(),
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .pattern(new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'))
+    .required(),
   phone: Joi.string()
     .pattern(new RegExp('^[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$'))
     .required(),
 });
-
-// pattern(new RegExp('^[\\w-\\.]+@([\\w-]+.)+[\\w-]{2,4}$'));
 
 router.get('/', async (req, res, next) => {
   try {
