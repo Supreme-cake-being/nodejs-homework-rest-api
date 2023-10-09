@@ -1,6 +1,6 @@
 import express from 'express';
 import contactsController from '../../controller/contacts-controller.js';
-import validateBody from '../../decorators/validateBody.js';
+import { validateBody, validateFavorite } from '../../decorators/index.js';
 import { isEmptyBody, isValidId } from '../../middlewares/index.js';
 import {
   contactsAddSchema,
@@ -8,7 +8,9 @@ import {
 } from '../../models/Contact.js';
 
 const contactsValidator = validateBody(contactsAddSchema);
-const contactUpdateFavoriteValidate = validateBody(contactUpdateFavoriteSchema);
+const contactUpdateFavoriteValidate = validateFavorite(
+  contactUpdateFavoriteSchema
+);
 
 const router = express.Router();
 
@@ -31,7 +33,6 @@ router.put(
 router.patch(
   '/:contactId/favorite',
   isValidId,
-  isEmptyBody,
   contactUpdateFavoriteValidate,
   contactsController.updateStatusContact
 );
