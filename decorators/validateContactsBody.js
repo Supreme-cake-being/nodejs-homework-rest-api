@@ -5,7 +5,7 @@ const validateBody = schema => {
     console.log(req.body);
     const { error } = schema.validate(req.body);
     if (error) {
-      const { name, email, phone } = req.body;
+      const { name, email, phone, owner } = req.body;
 
       const errorReason = !name
         ? Object.keys({ name })
@@ -13,9 +13,15 @@ const validateBody = schema => {
         ? Object.keys({ email })
         : !phone
         ? Object.keys({ phone })
-        : 'some';
+        : !owner
+        ? Object.keys({ owner })
+        : null;
 
-      return next(HttpError(400, `Missing required '${errorReason}' field`));
+      if (errorReason) {
+        return next(HttpError(400, `Missing required '${errorReason}' field`));
+      }
+
+      return next(HttpError(400, 'Validation failed'));
     }
     next();
   };
