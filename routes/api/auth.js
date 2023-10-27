@@ -3,7 +3,7 @@ import authController from '../../controller/auth-controller.js';
 
 import { userSignupSchema, userSigninSchema } from '../../models/User.js';
 import { validateAuthBody } from '../../decorators/index.js';
-import { authenticate, isEmptyBody } from '../../middlewares/index.js';
+import { authenticate, isEmptyBody, upload } from '../../middlewares/index.js';
 
 const signupValidator = validateAuthBody(userSignupSchema);
 const signinValidator = validateAuthBody(userSigninSchema);
@@ -17,5 +17,12 @@ router.post('/login', isEmptyBody, signinValidator, authController.login);
 router.post('/logout', authenticate, authController.logout);
 
 router.get('/current', authenticate, authController.current);
+
+router.patch(
+  '/avatars',
+  authenticate,
+  upload.single('avatarURL'),
+  authController.updateAvatar
+);
 
 export default router;

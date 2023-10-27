@@ -1,6 +1,7 @@
 import { HttpError } from '../helpers/index.js';
 import { ctrlWrapper } from '../decorators/index.js';
 import Contact from '../models/Contact.js';
+import path from 'path';
 
 const getAll = async (req, res, next) => {
   const { _id: owner } = req.user;
@@ -22,7 +23,6 @@ const getById = async (req, res, next) => {
 
 const add = async (req, res, next) => {
   const owner = req.user;
-  console.log(req.body);
   const result = await Contact.create({ ...req.body, owner });
   res.status(201).json(result);
 };
