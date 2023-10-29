@@ -21,7 +21,7 @@ router.get('/current', authenticate, authController.current);
 router.patch(
   '/avatars',
   authenticate,
-  upload.single('avatarURL'),
+  upload.single('avatar'),
   authController.updateAvatar
 );
 
