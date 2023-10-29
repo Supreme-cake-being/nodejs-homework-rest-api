@@ -1,12 +1,17 @@
 import express from 'express';
 import authController from '../../controller/auth-controller.js';
 
-import { userSignupSchema, userSigninSchema } from '../../models/User.js';
-import { validateAuthBody } from '../../decorators/index.js';
+import {
+  userSignupSchema,
+  userSigninSchema,
+  userEmailVerificationSchema,
+} from '../../models/User.js';
+import { validateAuthBody, validateEmail } from '../../decorators/index.js';
 import { authenticate, isEmptyBody, upload } from '../../middlewares/index.js';
 
 const signupValidator = validateAuthBody(userSignupSchema);
 const signinValidator = validateAuthBody(userSigninSchema);
+const emailVerificationValidator = validateEmail(userEmailVerificationSchema);
 
 const router = express.Router();
 
@@ -23,6 +28,15 @@ router.patch(
   authenticate,
   upload.single('avatar'),
   authController.updateAvatar
+);
+
+router.get('/verify/:verificationToken', authController.verify);
+
+router.post(
+  '/verify',
+  isEmptyBody,
+  emailVerificationValidator,
+  authController.resendVerifyEmail
 );
 
 export default router;

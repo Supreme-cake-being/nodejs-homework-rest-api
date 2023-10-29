@@ -1,10 +1,10 @@
 import { HttpError } from '../helpers/index.js';
 
-const validateBody = schema => {
+const validateEmail = schema => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
     if (error) {
-      return next(HttpError(400, `Missing field favorite`));
+      return next(HttpError(400, 'Verify token is required'));
     }
     next();
   };
@@ -12,4 +12,4 @@ const validateBody = schema => {
   return func;
 };
 
-export default validateBody;
+export default validateEmail;
